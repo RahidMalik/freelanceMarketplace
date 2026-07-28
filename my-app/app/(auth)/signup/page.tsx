@@ -4,10 +4,11 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/sonner'
 import { Eye, EyeOff } from "lucide-react"
 import { FcGoogle } from "react-icons/fc"
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function Signup() {
     const [fullName, setFullName] = useState('');
@@ -18,6 +19,7 @@ export default function Signup() {
     const [loading, setLoading] = useState<boolean>(false);
 
     const supabase = createClient();
+    const router = useRouter();
 
     // 1. SignUp logic with form validations
     const handleSignUp = async (e: React.FormEvent) => {
@@ -30,10 +32,10 @@ export default function Signup() {
             return;
         }
 
-        // Validation Rule 2: Email must be a valid @gmail.com address
-        const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-        if (!gmailRegex.test(email.trim())) {
-            toast.error('Please enter a valid Gmail address (e.g., user@gmail.com).');
+        // Validation Rule 2: Email must be a valid email address
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+            toast.error('Please enter a valid email address.');
             return;
         }
 
@@ -65,8 +67,8 @@ export default function Signup() {
         if (error) {
             toast.error(error.message);
         } else {
-            toast.success('Account created! Check your email to verify.');
-            window.location.href = '/login';
+            toast.success(`Account created! As a ${role}. Check your email to confirm.`);
+            router.push('/login');
         }
     };
 

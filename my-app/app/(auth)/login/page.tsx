@@ -4,10 +4,11 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from '@/components/ui/input'
 import { useState } from 'react'
-import { toast } from 'sonner'
+import { toast } from '@/components/ui/sonner'
 import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { FcGoogle } from "react-icons/fc"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -16,15 +17,16 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
 
     const supabase = createClient();
+    const router = useRouter();
 
     // 1. Login Form submit logic
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validation Rule 1: Email must be a valid @gmail.com address
-        const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-        if (!gmailRegex.test(email.trim())) {
-            toast.error('Please enter a valid Gmail address (e.g., user@gmail.com).');
+        // Validation Rule 1: Email must be a valid email address
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.trim())) {
+            toast.error('Please enter a valid email address.');
             return;
         }
 
@@ -56,7 +58,7 @@ export default function LoginPage() {
 
         if (email.trim().toLowerCase() === adminEmail?.toLowerCase()) {
             toast.success('Welcome Admin!');
-            window.location.href = '/admin';
+            router.push('/admin');
             return;
         }
 
@@ -79,11 +81,13 @@ export default function LoginPage() {
 
         // 4. Redirect based on role
         if (profile.role === 'client') {
-            window.location.href = '/dashboard/client';
+            router.push('/dashboard/client');
         } else if (profile.role === 'freelancer') {
-            window.location.href = '/dashboard/freelancer';
+            router.push('/dashboard/freelancer');
+        } else if (profile.role === 'admin') {
+            router.push('/admin');
         } else {
-            window.location.href = '/dashboard/client'; // fallback
+            router.push('/dashboard/freelancer'); // fallback
         }
     };
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { Toaster as Sonner, type ToasterProps, toast as sonnerToast } from "sonner"
 import { RiCheckboxCircleLine, RiInformationLine, RiErrorWarningLine, RiCloseCircleLine, RiLoaderLine } from "@remixicon/react"
 
 const Toaster = ({ ...props }: ToasterProps) => {
@@ -12,21 +12,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
-        success: (
-          <RiCheckboxCircleLine className="size-4" />
-        ),
-        info: (
-          <RiInformationLine className="size-4" />
-        ),
-        warning: (
-          <RiErrorWarningLine className="size-4" />
-        ),
-        error: (
-          <RiCloseCircleLine className="size-4" />
-        ),
-        loading: (
-          <RiLoaderLine className="size-4 animate-spin" />
-        ),
+        success: <RiCheckboxCircleLine className="size-4" />,
+        info: <RiInformationLine className="size-4" />,
+        warning: <RiErrorWarningLine className="size-4" />,
+        error: <RiCloseCircleLine className="size-4" />,
+        loading: <RiLoaderLine className="size-4 animate-spin" />,
       }}
       style={
         {
@@ -46,4 +36,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
   )
 }
 
-export { Toaster }
+// Custom wrapped toast
+const toast = {
+  error: (message: string) => sonnerToast.error(message, { id: 'app-toast', duration: 3000 }),
+  success: (message: string) => sonnerToast.success(message, { id: 'app-toast', duration: 3000 }),
+  info: (message: string) => sonnerToast.info(message, { id: 'app-toast', duration: 3000 }),
+  warning: (message: string) => sonnerToast.warning(message, { id: 'app-toast', duration: 3000 }),
+}
+
+export { Toaster, toast }
